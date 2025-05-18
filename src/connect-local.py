@@ -10,20 +10,27 @@ def connect():
     conn = None
     try:
         with psycopg.connect(
-            dbname=os.getenv("PGDATABASE"), 
-            user=os.getenv("PGUSER"),
-            password=os.getenv("PGPASSWORD"),
-            host=os.getenv("PGHOST"),
-            port=os.getenv("PGPORT"),
-            options='endpoint=' + os.getenv("ENDPOINTID")
+            dbname=os.getenv("PGLOCAL_DATABASE"), 
+            user=os.getenv("PGLOCAL_USER"),
+            password=os.getenv("PGLOCAL_PASSWORD"),
+            host=os.getenv("PGLOCAL_HOST"),
+            port=os.getenv("PGLOCAL_PORT"),
+            # options='endpoint=' + os.getenv("ENDPOINTID")
             ) as conn:
             print(f"Connection successfully.")
+            cur = conn.cursor()
+            cur.execute("SELECT VERSION();")
+            db_version = cur.fetchone()
+            print(f"PostgreSQL database version: {db_version}")
             return conn
     except (Exception, psycopg.DatabaseError) as error:
         print(error)
-        
+        # print("Connection failed.")
+
+
 
 if __name__ == '__main__':
     conn = connect()
     print(type(conn))
-    
+
+
